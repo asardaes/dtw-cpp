@@ -8,7 +8,7 @@ using namespace std;
 class UnivariateTimeSeries: public TSdist::TimeSeriesBase
 {
 public:
-    UnivariateTimeSeries(vector<double> &singleSeries) {
+    UnivariateTimeSeries(std::vector<double> &singleSeries) {
         if (singleSeries.empty()) throw("Series cannot be empty.");
         series = singleSeries;
     }
@@ -26,7 +26,7 @@ public:
     }
 
 private:
-    vector<double> series;
+    std::vector<double> series;
 };
 
 // Example
@@ -44,7 +44,8 @@ int main()
     cout << "DTW distance is: " << TSdist::computeDTW(ts1, ts2, 0, 2, 2) << endl;
     cout << "nDTW distance is: " << TSdist::computeNormalizedDTW(ts1, ts2, 1, 2) << endl;
 
-    cout << "DTW distance with backtrack is: " << TSdist::computeBacktrackDTW(ts1, ts2, 0, 2, 2, idx, idy) << endl;
+    cout << "DTW distance with backtrack is: " <<
+        TSdist::backtrackDTW(ts1, ts2, 0, 2, 2, idx, idy) << endl;
     cout << "X indices are: ";
     for (auto i : idx) cout << i << ", ";
     cout << endl;
@@ -52,7 +53,8 @@ int main()
     for (auto j : idy) cout << j << ", ";
     cout << endl;
 
-    cout << "nDTW distance with backtrack is: " << TSdist::computeBacktrackNormalizedDTW(ts1, ts2, 1, 2, idx, idy) << endl;
+    cout << "nDTW distance with backtrack is: " <<
+        TSdist::backtrackNormalizedDTW(ts1, ts2, 1, 2, idx, idy) << endl;
     cout << "X indices are: ";
     for (auto i : idx) cout << i << ", ";
     cout << endl;
