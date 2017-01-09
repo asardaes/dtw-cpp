@@ -39,5 +39,6 @@ int main()
     UnivariateTimeSeries ts2(series2);
 
     cout << "DTW distance is: " << TSdist::computeDTW(ts1, ts2, 1, 2, 2) << endl;
+    cout << "nDTW distance is: " << TSdist::computeNormalizedDTW(ts1, ts2, 1, 2) << endl;
     return 0;
 }

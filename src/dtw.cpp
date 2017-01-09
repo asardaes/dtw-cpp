@@ -107,4 +107,10 @@ double computeDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
     return std::pow(D[nx % 2][ny], 1.0 / p);
 }
 
+double computeNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+                            int window_size, int p)
+{
+    return computeDTW(x, y, window_size, p, 2) / (x.length() + y.length());
+}
+
 }
