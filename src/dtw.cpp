@@ -29,10 +29,27 @@ double lnorm(TimeSeriesBase const &x, TimeSeriesBase const &y,
 }
 
 // ================================================================================================
+/* Which direction to take when traversing CM */
+// ================================================================================================
+int which_direction(double (&tpl)[3], double a, double b, double c,
+                    double diag_weight, double local_cost)
+{
+    tpl[STEP_DIAG] = (a == NOT_VISITED) ? DBL_MAX : a + diag_weight * local_cost;
+    tpl[STEP_LEFT] = (b == NOT_VISITED) ? DBL_MAX : b + local_cost;
+    tpl[STEP_UP] = (c == NOT_VISITED) ? DBL_MAX : c + local_cost;
+
+    // which direction has the least associated cost?
+    int direction = (tpl[STEP_LEFT] < tpl[STEP_DIAG]) ? STEP_LEFT : STEP_DIAG;
+    direction = (tpl[STEP_UP] < tpl[direction]) ? STEP_UP : direction;
+
+    return direction;
+}
+
+// ================================================================================================
 /* DTW distance */
 // ================================================================================================
 double computeDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
-                  int window_size, int p, int diag_step)
+                  int window_size, int p, int diag_weight)
 {
     if (x.numVars() != y.numVars())
         throw("Series must have the same number of variables.");
@@ -40,8 +57,8 @@ double computeDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
     if (p < 1)
         throw("Parameter p must be positive.");
 
-    if (diag_step != 1 && diag_step != 2)
-        throw("Diagonal step can only be 1 or 2.");
+    if (diag_weight != 1 && diag_weight != 2)
+        throw("Diagonal weight can only be 1 or 2.");
 
     int nx = x.length();
     int ny = y.length();
@@ -93,19 +110,13 @@ double computeDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
             // l-norm for single time-point, p only affects multivariate series
             local_cost = std::pow(lnorm(x, y, p, i-1, j-1), p);
 
-            // first assign the current values of possible directions
-            tuple_direction[STEP_DIAG] = CM[(i - 1) % 2][j - 1];
-            tuple_direction[STEP_LEFT] = CM[i % 2][j - 1];
-            tuple_direction[STEP_UP] = CM[(i - 1) % 2][j];
-
-            // then update values appropriately
-            tuple_direction[STEP_DIAG] = (tuple_direction[STEP_DIAG] == NOT_VISITED) ? DBL_MAX : tuple_direction[STEP_DIAG] + diag_step * local_cost;
-            tuple_direction[STEP_LEFT] = (tuple_direction[STEP_LEFT] == NOT_VISITED) ? DBL_MAX : tuple_direction[STEP_LEFT] + local_cost;
-            tuple_direction[STEP_UP] = (tuple_direction[STEP_UP] == NOT_VISITED) ? DBL_MAX : tuple_direction[STEP_UP] + local_cost;
-
             // which direction has the least associated cost?
-            direction = (tuple_direction[STEP_LEFT] < tuple_direction[STEP_DIAG]) ? STEP_LEFT : STEP_DIAG;
-            direction = (tuple_direction[STEP_UP] < tuple_direction[direction]) ? STEP_UP : direction;
+            direction = which_direction(tuple_direction,
+                                        CM[(i - 1) % 2][j - 1],
+                                        CM[i % 2][j - 1],
+                                        CM[(i - 1) % 2][j],
+                                        diag_weight,
+                                        local_cost);
 
             CM[i % 2][j] = tuple_direction[direction];
         }
@@ -128,7 +139,7 @@ double computeNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
 /* DTW distance with backtracking */
 // ================================================================================================
 double computeBacktrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
-                           int window_size, int p, int diag_step,
+                           int window_size, int p, int diag_weight,
                            std::vector<int> &idx, std::vector<int> &idy)
 {
     if (x.numVars() != y.numVars())
@@ -137,8 +148,8 @@ double computeBacktrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
     if (p < 1)
         throw("Parameter p must be positive.");
 
-    if (diag_step != 1 && diag_step != 2)
-        throw("Diagonal step can only be 1 or 2.");
+    if (diag_weight != 1 && diag_weight != 2)
+        throw("Diagonal weight can only be 1 or 2.");
 
     // make sure indices are empty initially
     idx.clear();
@@ -194,19 +205,13 @@ double computeBacktrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
             // l-norm for single time-point, p only affects multivariate series
             local_cost = std::pow(lnorm(x, y, p, i-1, j-1), p);
 
-            // first assign the current values of possible directions
-            tuple_direction[STEP_DIAG] = CM[i - 1][j - 1];
-            tuple_direction[STEP_LEFT] = CM[i][j - 1];
-            tuple_direction[STEP_UP] = CM[i - 1][j];
-
-            // then update values appropriately
-            tuple_direction[STEP_DIAG] = (tuple_direction[STEP_DIAG] == NOT_VISITED) ? DBL_MAX : tuple_direction[STEP_DIAG] + diag_step * local_cost;
-            tuple_direction[STEP_LEFT] = (tuple_direction[STEP_LEFT] == NOT_VISITED) ? DBL_MAX : tuple_direction[STEP_LEFT] + local_cost;
-            tuple_direction[STEP_UP] = (tuple_direction[STEP_UP] == NOT_VISITED) ? DBL_MAX : tuple_direction[STEP_UP] + local_cost;
-
             // which direction has the least associated cost?
-            direction = (tuple_direction[STEP_LEFT] < tuple_direction[STEP_DIAG]) ? STEP_LEFT : STEP_DIAG;
-            direction = (tuple_direction[STEP_UP] < tuple_direction[direction]) ? STEP_UP : direction;
+            direction = which_direction(tuple_direction,
+                                        CM[i - 1][j - 1],
+                                        CM[i][j - 1],
+                                        CM[i - 1][j],
+                                        diag_weight,
+                                        local_cost);
 
             /*
              * I can use the same matrix to save both cost values and steps taken by shifting
