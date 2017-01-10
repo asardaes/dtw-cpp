@@ -13,16 +13,20 @@ public:
         series = singleSeries;
     }
 
-    int length() const {
+    int length() const override {
         return series.size();
     }
 
-    int numVars() const {
+    int numVars() const override {
         return 1;
     }
 
-    double indexSeries(int time_index, int var_index) const {
-        return series[time_index];
+    const double& indexSeries(int time_index, int var_index) const override {
+        return series.at(time_index);
+    }
+
+    double& indexSeries(int time_index, int var_index) override {
+        return series.at(time_index);
     }
 
 private:
@@ -40,6 +44,9 @@ int main()
 
     UnivariateTimeSeries ts1(series1);
     UnivariateTimeSeries ts2(series2);
+
+    // check that assignment works
+    ts1[0][0] = 1;
 
     cout << "DTW distance is: " << TSdist::computeDTW(ts1, ts2, 0, 2, 2) << endl;
     cout << "nDTW distance is: " << TSdist::computeNormalizedDTW(ts1, ts2, 1, 2) << endl;

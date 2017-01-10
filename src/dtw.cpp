@@ -22,7 +22,7 @@ double lnorm(TimeSeriesBase const &x, TimeSeriesBase const &y,
     double result = 0;
 
     for (int k = 0; k < x.numVars(); k++) {
-        result += std::abs(std::pow(x.indexSeries(time_x, k) - y.indexSeries(time_y, k), p));
+        result += std::abs(std::pow(x[time_x][k] - y[time_y][k], p));
     }
 
     return std::pow(result, 1.0 / p);
