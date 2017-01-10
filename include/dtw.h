@@ -27,7 +27,7 @@ double computeNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
  *
  * Parameter p is for the Lp norm
  * Parameter diag_weight is the weight of the diagonal in the step pattern
- * The indices of the correspondance between x and y are returned in idx and idy
+ * The indices of the correspondence between x and y are returned in idx and idy
  */
 double backtrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
                     int window_size, int p, int diag_weight,
@@ -38,7 +38,7 @@ double backtrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
  *
  * Parameter p is for the Lp norm
  * Parameter diag_weight is the weight of the diagonal in the step pattern
- * The indices of the correspondance between x and y are returned in idx and idy
+ * The indices of the correspondence between x and y are returned in idx and idy
  */
 double backtrackNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
                               int window_size, int p,

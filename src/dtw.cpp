@@ -31,12 +31,12 @@ double lnorm(TimeSeriesBase const &x, TimeSeriesBase const &y,
 // ================================================================================================
 /* Which direction to take when traversing CM */
 // ================================================================================================
-int which_direction(double (&tpl)[3], double a, double b, double c,
+int which_direction(double (&tpl)[3], double diag, double left, double up,
                     double diag_weight, double local_cost)
 {
-    tpl[STEP_DIAG] = (a == NOT_VISITED) ? DBL_MAX : a + diag_weight * local_cost;
-    tpl[STEP_LEFT] = (b == NOT_VISITED) ? DBL_MAX : b + local_cost;
-    tpl[STEP_UP] = (c == NOT_VISITED) ? DBL_MAX : c + local_cost;
+    tpl[STEP_DIAG] = (diag == NOT_VISITED) ? DBL_MAX : diag + diag_weight * local_cost;
+    tpl[STEP_LEFT] = (left == NOT_VISITED) ? DBL_MAX : left + local_cost;
+    tpl[STEP_UP] = (up == NOT_VISITED) ? DBL_MAX : up + local_cost;
 
     // which direction has the least associated cost?
     int direction = (tpl[STEP_LEFT] < tpl[STEP_DIAG]) ? STEP_LEFT : STEP_DIAG;
