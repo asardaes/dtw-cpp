@@ -16,7 +16,7 @@ static const double DBL_MAX = std::numeric_limits<double>::max();
 // ================================================================================================
 /* Lp Norm */
 // ================================================================================================
-double lnorm(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double lnorm(const TimeSeriesBase& x, const TimeSeriesBase& y,
              int p, int time_x, int time_y)
 {
     double result = 0;
@@ -48,7 +48,7 @@ int which_direction(double (&tpl)[3], double diag, double left, double up,
 // ================================================================================================
 /* DTW distance */
 // ================================================================================================
-double computeDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double computeDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                   int window_size, int p, int diag_weight)
 {
     if (x.numVars() != y.numVars())
@@ -129,7 +129,7 @@ double computeDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
 // ================================================================================================
 /* Normalized DTW distance */
 // ================================================================================================
-double computeNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double computeNormalizedDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                             int window_size, int p)
 {
     return computeDTW(x, y, window_size, p, 2) / (x.length() + y.length());
@@ -138,9 +138,9 @@ double computeNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
 // ================================================================================================
 /* DTW distance with backtracking */
 // ================================================================================================
-double backtrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double backtrackDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                     int window_size, int p, int diag_weight,
-                    std::vector<int> &idx, std::vector<int> &idy)
+                    std::vector<int>& idx, std::vector<int>& idy)
 {
     if (x.numVars() != y.numVars())
         throw("Series must have the same number of variables.");
@@ -264,9 +264,9 @@ double backtrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
 // ================================================================================================
 /* Normalized DTW distance with backtracking */
 // ================================================================================================
-double backtrackNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double backtrackNormalizedDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                               int window_size, int p,
-                              std::vector<int> &idx, std::vector<int> &idy)
+                              std::vector<int>& idx, std::vector<int>& idy)
 {
     return backtrackDTW(x, y, window_size, p, 2, idx, idy) / (x.length() + y.length());
 }

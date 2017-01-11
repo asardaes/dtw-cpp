@@ -7,18 +7,19 @@ namespace TSdist {
 class TimeSeriesBase
 {
 public:
-    // Move semantics?
-    TimeSeriesBase(TimeSeriesBase const &) = default;
+
+    // Move semantics
+    TimeSeriesBase(const TimeSeriesBase&) = default;
     TimeSeriesBase(TimeSeriesBase&&) = default;
-    TimeSeriesBase& operator=(TimeSeriesBase const &) = default;
-    TimeSeriesBase& operator=(TimeSeriesBase&&) = default;
+    virtual TimeSeriesBase& operator=(const TimeSeriesBase&) = default;
+    virtual TimeSeriesBase& operator=(TimeSeriesBase&&) = default;
     virtual ~TimeSeriesBase() = default;
 
     // ============================================================================================
     /* Pure virtual methods */
     // ============================================================================================
 
-    // For multivariate series
+    // For multivariate series. Number of variables.
     virtual int numVars() const = 0;
 
     // Length of a single variable of the series
@@ -28,52 +29,55 @@ public:
     virtual const double& indexSeries(int time_index, int var_index) const = 0;
     virtual double& indexSeries(int time_index, int var_index) = 0;
 
-    // ============================================================================================
-    /* Virtual methods with defaults */
-    // ============================================================================================
-
-    // --------------------------------------------------------------------------------------------
-    /* Double subscript operator will call indexSeries */
-    // --------------------------------------------------------------------------------------------
+private: // More public methods below
 
     // Proxy class for double subscript
     class SubscriptProxy
     {
     public:
-        SubscriptProxy(TimeSeriesBase const &outer, int time_index) :
-            _outer(outer) ,
+        SubscriptProxy(const TimeSeriesBase* outer_this, int time_index) :
+            _outer_this(outer_this) ,
             _time_index(time_index)
         { };
 
-        // If Time Series is const, return const value
         const double& operator[](int var_index) const {
-            return _outer.indexSeries(_time_index, var_index);
+            return _outer_this->indexSeries(_time_index, var_index);
         }
 
-        // If Time Series is not const (e.g. when assigning using double brackets), return non-const
         double& operator[](int var_index) {
-            // I couldn't find a way to do this without using const_cast
-            return const_cast<TimeSeriesBase&>(_outer).indexSeries(_time_index, var_index);
+            return const_cast<TimeSeriesBase*>(_outer_this)->indexSeries(_time_index, var_index);
         }
 
     private:
-        const TimeSeriesBase& _outer;
+        const TimeSeriesBase* _outer_this;
         int _time_index;
     };
 
+public:
+
+    // ============================================================================================
+    /* Non-virtual methods */
+    // ============================================================================================
+
+    // --------------------------------------------------------------------------------------------
+    /* Double subscript operator will call indexSeries through SubscriptProxy struct */
+    // --------------------------------------------------------------------------------------------
+
     // Const version
-    virtual const SubscriptProxy operator[](int time_index) const {
-        return SubscriptProxy(*this, time_index);
+    const SubscriptProxy operator[](int time_index) const {
+        return SubscriptProxy{this, time_index};
     }
 
     // Non-const version
-    virtual SubscriptProxy operator[](int time_index) {
-        return SubscriptProxy(*this, time_index);
+    SubscriptProxy operator[](int time_index) {
+        return SubscriptProxy{this, time_index};
     }
 
 protected:
+
     // Abstract classes cannot be instantiated
     TimeSeriesBase() = default;
+
 };
 
 }

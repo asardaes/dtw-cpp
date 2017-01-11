@@ -8,9 +8,11 @@ using namespace std;
 class UnivariateTimeSeries: public TSdist::TimeSeriesBase
 {
 public:
-    UnivariateTimeSeries(std::vector<double> &singleSeries) {
-        if (singleSeries.empty()) throw("Series cannot be empty.");
-        series = singleSeries;
+
+    UnivariateTimeSeries(std::vector<double> singleSeries) :
+        series(std::move(singleSeries))
+    {
+        if (series.empty()) throw("Series cannot be empty.");
     }
 
     int length() const override {
@@ -37,16 +39,19 @@ private:
 int main()
 {
     std::vector<double> series1 = {1.0, 2.0, 3.0, 4.0};
-    std::vector<double> series2 = {0.0, -1.0, 5.0, 2.5};
 
     std::vector<int> idx;
     std::vector<int> idy;
 
     UnivariateTimeSeries ts1(series1);
-    UnivariateTimeSeries ts2(series2);
+    const UnivariateTimeSeries ts2(std::vector<double>{0.0, -1.0, 5.0, 2.5});
 
     // check that assignment works
     ts1[0][0] = 1;
+    // ts2[0][0] = 0; // error
+
+    // check that series1 was copied into ts1
+    series1[0] = 100;
 
     cout << "DTW distance is: " << TSdist::computeDTW(ts1, ts2, 0, 2, 2) << endl;
     cout << "nDTW distance is: " << TSdist::computeNormalizedDTW(ts1, ts2, 1, 2) << endl;

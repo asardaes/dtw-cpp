@@ -7,42 +7,45 @@
 namespace TSdist {
 
 /** Simple DTW distance and optionally a slanted band constraint
- *
- * Parameter p is for the Lp norm
- * Parameter diag_weight is the weight of the diagonal in the step pattern
+
+   Parameter window_size is for the global constraint. <= 0 means no constraint
+   Parameter p is for the Lp norm
+   Parameter diag_weight is the weight of the diagonal in the step pattern
  */
-double computeDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double computeDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                   int window_size, int p, int diag_weight);
 
 
 /** Normalized DTW distance and optionally a slanted band constraint
- *
- * Parameter p is for the Lp norm
+
+   Parameter window_size is for the global constraint. <= 0 means no constraint
+   Parameter p is for the Lp norm
  */
-double computeNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double computeNormalizedDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                             int window_size, int p);
 
 
 /** Simple DTW distance with backtracking and optionally a slanted band constraint
- *
- * Parameter p is for the Lp norm
- * Parameter diag_weight is the weight of the diagonal in the step pattern
- * The indices of the correspondence between x and y are returned in idx and idy
+
+   Parameter window_size is for the global constraint. <= 0 means no constraint
+   Parameter p is for the Lp norm
+   Parameter diag_weight is the weight of the diagonal in the step pattern
+   The indices of the correspondence between x and y are returned in idx and idy
  */
-double backtrackDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double backtrackDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                     int window_size, int p, int diag_weight,
-                    std::vector<int> &idx, std::vector<int> &idy);
+                    std::vector<int>& idx, std::vector<int>& idy);
 
 
 /** Normalized DTW distance with backtracking and optionally a slanted band constraint
- *
- * Parameter p is for the Lp norm
- * Parameter diag_weight is the weight of the diagonal in the step pattern
- * The indices of the correspondence between x and y are returned in idx and idy
+
+   Parameter window_size is for the global constraint. <= 0 means no constraint
+   Parameter p is for the Lp norm
+   The indices of the correspondence between x and y are returned in idx and idy
  */
-double backtrackNormalizedDTW(TimeSeriesBase const &x, TimeSeriesBase const &y,
+double backtrackNormalizedDTW(const TimeSeriesBase& x, const TimeSeriesBase& y,
                               int window_size, int p,
-                              std::vector<int> &idx, std::vector<int> &idy);
+                              std::vector<int>& idx, std::vector<int>& idy);
 
 }
 
