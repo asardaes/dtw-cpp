@@ -31,6 +31,11 @@ public:
         return series.at(time_index);
     }
 
+    std::vector<double>::iterator begin() { return series.begin(); }
+    std::vector<double>::iterator end() { return series.end(); }
+    std::vector<double>::const_iterator begin() const { return series.begin(); }
+    std::vector<double>::const_iterator end() const { return series.end(); }
+
 private:
     std::vector<double> series;
 };
@@ -53,8 +58,17 @@ int main()
     // check that series1 was copied into ts1
     series1[0] = 100;
 
+
+
+
+
     cout << "DTW distance is: " << TSdist::computeDTW(ts1, ts2, 0, 2, 2) << endl;
     cout << "nDTW distance is: " << TSdist::computeNormalizedDTW(ts1, ts2, 1, 2) << endl;
+
+
+
+
+
 
     cout << "DTW distance with backtrack is: " <<
         TSdist::backtrackDTW(ts1, ts2, 0, 2, 2, idx, idy) << endl;
@@ -72,6 +86,23 @@ int main()
     cout << endl;
     cout << "Y indices are: ";
     for (auto j : idy) cout << j << ", ";
+    cout<<endl;
+
+
+
+
+
+    UnivariateTimeSeries lower(std::vector<double>{0, 0, 0, 0});
+    UnivariateTimeSeries upper(std::vector<double>{0, 0, 0, 0});
+
+    TSdist::computeEnvelop(ts1, 1, lower, upper);
+
+    cout << "X lower envelop is: ";
+    for (auto i : lower) cout << i << ", ";
+    cout << endl;
+    cout << "X upper envelop is: ";
+    for (auto j : upper) cout << j << ", ";
+    cout << endl;
 
     return 0;
 }
