@@ -70,8 +70,8 @@ int main()
 
 
 
-    cout << "DTW distance with backtrack is: " <<
-        TSdist::backtrackDTW(ts1, ts2, 0, 2, 2, idx, idy) << endl;
+    cout << "cDTW distance with backtrack is: " <<
+        TSdist::backtrackDTW(ts1, ts2, 1, 2, 2, idx, idy) << endl;
     cout << "X indices are: ";
     for (auto i : idx) cout << i << ", ";
     cout << endl;
@@ -94,16 +94,19 @@ int main()
 
     UnivariateTimeSeries lower(std::vector<double>{0, 0, 0, 0});
     UnivariateTimeSeries upper(std::vector<double>{0, 0, 0, 0});
+    UnivariateTimeSeries H(std::vector<double>{0, 0, 0, 0});
 
-    TSdist::computeEnvelop(ts1, 1, lower, upper);
+    TSdist::computeEnvelop(ts2, 1, lower, upper);
 
-    cout << "X lower envelop is: ";
+    cout << "Y lower envelop is: ";
     for (auto i : lower) cout << i << ", ";
     cout << endl;
-    cout << "X upper envelop is: ";
+    cout << "Y upper envelop is: ";
     for (auto j : upper) cout << j << ", ";
     cout << endl;
-    cout << "LB_Keogh with L2 norm is: " << TSdist::lbKeogh(ts2, ts1, 2, lower, upper) << endl;
+    cout << "LB_Keogh with L2 norm is: " << TSdist::lbKeogh(ts1, ts2, 2, lower, upper) << endl;
+    cout << "LB_Improved with L2 norm is: " <<
+        TSdist::lbImproved(ts1, ts2, 1, 2, lower, upper, H) << endl;
 
     return 0;
 }

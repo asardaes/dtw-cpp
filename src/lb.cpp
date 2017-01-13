@@ -5,13 +5,16 @@
 
 namespace TSdist {
 
+// ================================================================================================
+/* Warping envelop */
+// ================================================================================================
 void computeEnvelop(const TimeSeriesBase& x, int window_size,
                     TimeSeriesBase& lower_envelop, TimeSeriesBase& upper_envelop)
 {
     if (window_size < 1)
         throw("Window size must be positive.");
 
-    if (x.numVars() > 1)
+    if (x.numVars() != 1)
         throw("Only univariate series are supported.");
 
     if (x.length() != lower_envelop.length() || x.length() != upper_envelop.length())
@@ -66,13 +69,16 @@ void computeEnvelop(const TimeSeriesBase& x, int window_size,
     }
 }
 
+// ================================================================================================
+/* LB_Keogh */
+// ================================================================================================
 double lbKeogh(const TimeSeriesBase& x, const TimeSeriesBase& y, int p,
                const TimeSeriesBase& lower_envelop, const TimeSeriesBase& upper_envelop)
 {
     if (p < 1)
         throw("Parameter p must be positive.");
 
-    if (x.numVars() > 1 || y.numVars() > 1)
+    if (x.numVars() != 1 || y.numVars() != 1)
         throw("Only univariate series are supported.");
 
     if (x.length() != y.length())
@@ -89,6 +95,57 @@ double lbKeogh(const TimeSeriesBase& x, const TimeSeriesBase& y, int p,
             lb += std::pow(x[i][0] - upper_envelop[i][0], p);
         else if (x[i][0] < lower_envelop[i][0])
             lb += std::pow(lower_envelop[i][0] - x[i][0], p);
+    }
+
+    return std::pow(lb, 1.0 / p);
+}
+
+// ================================================================================================
+/* LB_Improved */
+// ================================================================================================
+double lbImproved(const TimeSeriesBase& x, const TimeSeriesBase& y,
+                  int window_size, int p,
+                  TimeSeriesBase& lower_envelop, TimeSeriesBase& upper_envelop,
+                  TimeSeriesBase& H)
+{
+    if (p < 1)
+        throw("Parameter p must be positive.");
+
+    if (x.numVars() != 1 || y.numVars() != 1)
+        throw("Only univariate series are supported.");
+
+    if (x.length() != y.length())
+        throw("Length mismatch between x and y.");
+
+    double lb = 0;
+
+    // window size and length checked here
+    computeEnvelop(y, window_size, lower_envelop, upper_envelop);
+
+    for (int i = 0; i < x.length(); i++)
+    {
+        if (x[i][0] > upper_envelop[i][0]) {
+            H[i][0] = upper_envelop[i][0];
+            lb += std::pow(x[i][0] - upper_envelop[i][0], p);
+
+        } else if (x[i][0] < lower_envelop[i][0]) {
+            H[i][0] = lower_envelop[i][0];
+            lb += std::pow(lower_envelop[i][0] - x[i][0], p);
+
+        } else {
+            H[i][0] = x[i][0];
+        }
+    }
+
+    // window size and length checked here
+    computeEnvelop(H, window_size, lower_envelop, upper_envelop);
+
+    for (int i = 0; i < y.length(); i++)
+    {
+        if (y[i][0] > upper_envelop[i][0])
+            lb += std::pow(y[i][0] - upper_envelop[i][0], p);
+        else if (y[i][0] < lower_envelop[i][0])
+            lb += std::pow(lower_envelop[i][0] - y[i][0], p);
     }
 
     return std::pow(lb, 1.0 / p);
