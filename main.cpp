@@ -103,6 +103,7 @@ int main()
     cout << "X upper envelop is: ";
     for (auto j : upper) cout << j << ", ";
     cout << endl;
+    cout << "LB_Keogh with L2 norm is: " << TSdist::lbKeogh(ts2, ts1, 2, lower, upper) << endl;
 
     return 0;
 }

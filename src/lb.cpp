@@ -1,3 +1,4 @@
+#include <cmath>
 #include <deque>
 #include "ts.h"
 #include "lb.h"
@@ -63,6 +64,34 @@ void computeEnvelop(const TimeSeriesBase& x, int window_size,
         if(i - maxfifo.front() >= window_size) maxfifo.pop_front();
         if(i - minfifo.front() >= window_size) minfifo.pop_front();
     }
+}
+
+double lbKeogh(const TimeSeriesBase& x, const TimeSeriesBase& y, int p,
+               const TimeSeriesBase& lower_envelop, const TimeSeriesBase& upper_envelop)
+{
+    if (p < 1)
+        throw("Parameter p must be positive.");
+
+    if (x.numVars() > 1 || y.numVars() > 1)
+        throw("Only univariate series are supported.");
+
+    if (x.length() != y.length())
+        throw("Length mismatch between x and y.");
+
+    if (y.length() != lower_envelop.length() || y.length() != upper_envelop.length())
+        throw("Length mismatch between y and the envelops.");
+
+    double lb = 0;
+
+    for (int i = 0; i < x.length(); i++)
+    {
+        if (x[i][0] > upper_envelop[i][0])
+            lb += std::pow(x[i][0] - upper_envelop[i][0], p);
+        else if (x[i][0] < lower_envelop[i][0])
+            lb += std::pow(lower_envelop[i][0] - x[i][0], p);
+    }
+
+    return std::pow(lb, 1.0 / p);
 }
 
 }
