@@ -1,9 +1,9 @@
 #ifndef _LB_H
 #define _LB_H
 
-namespace TSdist {
-
 #include "ts.h"
+
+namespace TSdist {
 
 /** Compute warping envelop based on a Sakoe-Chiba window
 

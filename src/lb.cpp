@@ -20,9 +20,9 @@ void computeEnvelop(const TimeSeriesBase& x, int window_size,
     if (x.length() != lower_envelop.length() || x.length() != upper_envelop.length())
         throw("Length mismatch between x and the envelops.");
 
+    int constraint = window_size;
     window_size = window_size * 2 + 1;
-    int constraint = (window_size - 1) / 2;
-    int array_size = static_cast<int>(x.length());
+    int array_size = x.length();
     std::deque<int> maxfifo, minfifo;
 
     maxfifo.push_back(0);
