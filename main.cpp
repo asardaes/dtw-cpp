@@ -63,7 +63,7 @@ int main()
 
 
 
-    cout << "DTW distance is: " << TSdist::computeDTW(ts1, ts2, 0, 2, 2) << endl;
+    cout << "cDTW distance is: " << TSdist::computeDTW(ts1, ts2, 1, 2, 2) << endl;
     cout << "nDTW distance is: " << TSdist::computeNormalizedDTW(ts1, ts2, 1, 2) << endl;
 
 
@@ -120,17 +120,13 @@ int main()
 
     list<UnivariateTimeSeries> tsdb = {ts1, ts2};
 
-    const UnivariateTimeSeries& nn1 = dynamic_cast<const UnivariateTimeSeries&>(TSdist::NearestNeighborDTW(
-        tsdb, query1, 1, 2, 2, lower, upper, L2, U2, H
-    ));
+    UnivariateTimeSeries nn1 = TSdist::NearestNeighborDTW(tsdb, query1, 1, 2, 2);
 
     cout << "Nearest neighbor 1 is: ";
     for (auto i : nn1) cout << i << ", ";
     cout << endl;
 
-    const UnivariateTimeSeries& nn2 = dynamic_cast<const UnivariateTimeSeries&>(TSdist::NearestNeighborDTW(
-        tsdb, query2, 1, 2, 2, lower, upper, L2, U2, H
-    ));
+    UnivariateTimeSeries nn2 = TSdist::NearestNeighborDTW(tsdb, query2, 1, 2, 2);
 
     cout << "Nearest neighbor 2 is: ";
     for (auto i : nn2) cout << i << ", ";

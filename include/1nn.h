@@ -13,15 +13,13 @@ namespace TSdist {
 
     This assumes the time-series database (TSDB) supports iterators that reference/point to
     TimeSeriesBase derivatives.
-    Parameters 'L*', 'U*' and 'H' are helpers that should have the same length as 'query'
  */
-template<typename TSDB>
-const TimeSeriesBase& NearestNeighborDTW(const TSDB& tsdb, const TimeSeriesBase& query,
-                                   int window_size, int p, int diag_weight,
-                                   TimeSeriesBase& L1, TimeSeriesBase& U1,
-                                   TimeSeriesBase& L2, TimeSeriesBase& U2,
-                                   TimeSeriesBase& H)
+template<typename TSDB, typename TS>
+const TS& NearestNeighborDTW(const TSDB& tsdb, const TS& query,
+                             int window_size, int p, int diag_weight)
 {
+    TS L1(query), U1(query), L2(query), U2(query), H(query);
+
     // Window size and length checked here
     computeEnvelop(query, window_size, L1, U1);
 
@@ -29,9 +27,9 @@ const TimeSeriesBase& NearestNeighborDTW(const TSDB& tsdb, const TimeSeriesBase&
     double d = std::numeric_limits<double>::max();
 
     // To return
-    const TimeSeriesBase* NN = nullptr;
+    const TS *NN = nullptr;
 
-    for (const TimeSeriesBase& REF : tsdb)
+    for (const TS& REF : tsdb)
     {
         double lb = 0;
 
@@ -76,7 +74,7 @@ const TimeSeriesBase& NearestNeighborDTW(const TSDB& tsdb, const TimeSeriesBase&
         }
     }
 
-    return reinterpret_cast<const TimeSeriesBase&>(*NN);
+    return *NN;
 }
 
 }
