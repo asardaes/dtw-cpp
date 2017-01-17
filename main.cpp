@@ -1,4 +1,5 @@
 #include <iostream>
+#include <list>
 #include <vector>
 #include "TSdist.h"
 
@@ -107,6 +108,33 @@ int main()
     cout << "LB_Keogh with L2 norm is: " << TSdist::lbKeogh(ts1, ts2, 2, lower, upper) << endl;
     cout << "LB_Improved with L2 norm is: " <<
         TSdist::lbImproved(ts1, ts2, 1, 2, lower, upper, H) << endl;
+
+
+
+
+
+    UnivariateTimeSeries L2(std::vector<double>{0, 0, 0, 0});
+    UnivariateTimeSeries U2(std::vector<double>{0, 0, 0, 0});
+    UnivariateTimeSeries query1(std::vector<double>{-1, 1.3, 0.3, 2});
+    UnivariateTimeSeries query2(std::vector<double>{-1, 1.3, 5.3, 2});
+
+    list<UnivariateTimeSeries> tsdb = {ts1, ts2};
+
+    const UnivariateTimeSeries& nn1 = dynamic_cast<const UnivariateTimeSeries&>(TSdist::NearestNeighborDTW(
+        tsdb, query1, 1, 2, 2, lower, upper, L2, U2, H
+    ));
+
+    cout << "Nearest neighbor 1 is: ";
+    for (auto i : nn1) cout << i << ", ";
+    cout << endl;
+
+    const UnivariateTimeSeries& nn2 = dynamic_cast<const UnivariateTimeSeries&>(TSdist::NearestNeighborDTW(
+        tsdb, query2, 1, 2, 2, lower, upper, L2, U2, H
+    ));
+
+    cout << "Nearest neighbor 2 is: ";
+    for (auto i : nn2) cout << i << ", ";
+    cout << endl;
 
     return 0;
 }
