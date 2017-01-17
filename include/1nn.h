@@ -3,7 +3,8 @@
 
 #include <cmath>
 #include <limits>
-#include "ts.h"
+#include "dtw.h"
+#include "lb.h"
 
 namespace TSdist {
 
