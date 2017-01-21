@@ -16,7 +16,7 @@ namespace TSdist {
     TimeSeriesBase derivatives (see ts.h).
  */
 template<typename TSDB, typename TS>
-const TS& nearestNeighborDTW(const TSDB& tsdb, const TS& query,
+const TS nearestNeighborDTW(const TSDB& tsdb, const TS& query,
                              int window_size, int p, int diag_weight)
 {
     TS L(query), U(query), H(query);

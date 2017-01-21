@@ -46,9 +46,6 @@ int main()
 {
     std::vector<double> series1 = {1.0, 2.0, 3.0, 4.0};
 
-    std::vector<int> idx;
-    std::vector<int> idy;
-
     UnivariateTimeSeries ts1(series1);
     const UnivariateTimeSeries ts2(std::vector<double>{0.0, -1.0, 5.0, 2.5});
 
@@ -70,6 +67,8 @@ int main()
 
 
 
+    std::vector<int> idx;
+    std::vector<int> idy;
 
     cout << "cDTW distance with backtrack is: " <<
         TSdist::backtrackDTW(ts1, ts2, 1, 2, 2, idx, idy) << endl;
