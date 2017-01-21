@@ -113,20 +113,18 @@ int main()
 
 
 
-    UnivariateTimeSeries L2(std::vector<double>{0, 0, 0, 0});
-    UnivariateTimeSeries U2(std::vector<double>{0, 0, 0, 0});
     UnivariateTimeSeries query1(std::vector<double>{-1, 1.3, 0.3, 2});
     UnivariateTimeSeries query2(std::vector<double>{-1, 1.3, 5.3, 2});
 
     list<UnivariateTimeSeries> tsdb = {ts1, ts2};
 
-    UnivariateTimeSeries nn1 = TSdist::NearestNeighborDTW(tsdb, query1, 1, 2, 2);
+    UnivariateTimeSeries nn1 = TSdist::nearestNeighborDTW(tsdb, query1, 1, 2, 2);
 
     cout << "Nearest neighbor 1 is: ";
     for (auto i : nn1) cout << i << ", ";
     cout << endl;
 
-    UnivariateTimeSeries nn2 = TSdist::NearestNeighborDTW(tsdb, query2, 1, 2, 2);
+    UnivariateTimeSeries nn2 = TSdist::nearestNeighborDTW(tsdb, query2, 1, 2, 2);
 
     cout << "Nearest neighbor 2 is: ";
     for (auto i : nn2) cout << i << ", ";
